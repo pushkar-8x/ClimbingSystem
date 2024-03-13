@@ -51,6 +51,10 @@ private :
 
 	void Move(const FInputActionValue& Value);
 
+	void HandleClimbMovementInput(const FInputActionValue& Value);
+
+	void HandleGroundMovementInput(const FInputActionValue& Value);
+
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
@@ -72,5 +76,7 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	FORCEINLINE class UCustomMovementComponent* GetCustomMovementComponent() const { return CustomMovementComponent; }
+
+	
 };
 

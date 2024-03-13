@@ -29,20 +29,26 @@ protected:
 		enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
 	virtual void PhysCustom(float deltaTime, int32 Iterations) override;
+
+public:
+	virtual float GetMaxSpeed() const override;
+	virtual float GetMaxAcceleration() const override;
 #pragma endregion
 
 private:
 
 #pragma region ClimbTraces
 
-	TArray<FHitResult> DoCapsuleTraceMultiForObjects(const FVector& start, const FVector& end, bool bShowDebugShape , bool bShowPersistent);
-	FHitResult DoLineTraceSingleObject(const FVector& start, const FVector& end, bool bShowDebugShape,bool bShowPersistent);
+	TArray<FHitResult> DoCapsuleTraceMultiForObjects(const FVector& start, const FVector& end, bool bShowDebugShape = false , bool bShowPersistent = false);
+	FHitResult DoLineTraceSingleObject(const FVector& start, const FVector& end, bool bShowDebugShape = false,bool bShowPersistent= false);
 
 #pragma endregion
 
 #pragma region ClimbCoreVariables
 
 	TArray<FHitResult> ClimbableSurfacesTracedResults;
+	FVector CurrentClimbableSurfaceLocation;
+	FVector CurrentClimbableSurfaceNormal;
 
 #pragma endregion
 
@@ -60,6 +66,18 @@ private:
 		Category = "CharacterMovement : Movement", meta = (AllowPrivateAccess = "true"))
 		float CapsuleTraceHalfHeight = 72.f;
 
+	UPROPERTY(EditDefaultsOnly, BluePrintReadOnly,
+		Category = "CharacterMovement : Movement", meta = (AllowPrivateAccess = "true"))
+		float MaxBrakeClimbDeceleration = 72.f;
+
+	UPROPERTY(EditDefaultsOnly, BluePrintReadOnly,
+		Category = "CharacterMovement : Movement", meta = (AllowPrivateAccess = "true"))
+		float MaxClimbSpeed = 100.f;
+
+	UPROPERTY(EditDefaultsOnly, BluePrintReadOnly,
+		Category = "CharacterMovement : Movement", meta = (AllowPrivateAccess = "true"))
+		float MaxClimbAcceleration = 100.f;
+
 #pragma endregion
 
 #pragma region ClimbCore
@@ -71,9 +89,23 @@ private:
 	void StartClimbing();
 	void StopClimbing();
 
+
+	void PhysClimb(float deltaTime, int32 Iterations);
+
+	void ProcessClimbableSurfaceInfo();
+
+	bool CheckShouldStopClimbing();
+
+	void SnapMovementToClimbableSurfaces(float deltaTime);
+
+	FQuat GetClimbRotation(float DeltaTime);
+
+
 public:
 	void ToggleClimbing(bool bEnableClimb);
 	bool IsClimbing() const;
+
+	FORCEINLINE FVector GetClimbableSurfaceNormal() const { return CurrentClimbableSurfaceNormal; }
 
 #pragma endregion
 	

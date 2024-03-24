@@ -4,7 +4,9 @@
 #include "AnimInstance/CharacterAnimInstance.h"
 #include "ClimbingSystem/ClimbingSystemCharacter.h"
 #include "Components/CustomMovementComponent.h"
+#include "ClimbingSystem/DebugHelpers.h"
 #include"Kismet/KismetMathLibrary.h"
+
 
 
 void UCharacterAnimInstance::NativeInitializeAnimation()
@@ -32,7 +34,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UCharacterAnimInstance::GetGroundSpeed()
 {
-	UKismetMathLibrary::VSizeXY(ClimbingSystemCharacter->GetVelocity());
+	GroundSpeed = UKismetMathLibrary::VSizeXY(ClimbingSystemCharacter->GetVelocity());
 }
 
 void UCharacterAnimInstance::GetAirSpeed()
@@ -42,8 +44,10 @@ void UCharacterAnimInstance::GetAirSpeed()
 
 void UCharacterAnimInstance::GetShouldMove()
 {
+
 	bShouldMove = CustomMovementComponent->GetCurrentAcceleration().Size()>0
-		&&GroundSpeed>5.0f&&!bIsFalling;
+		&& GroundSpeed>5.f && !bIsFalling;
+	
 }
 
 void UCharacterAnimInstance::GetIsFalling()
